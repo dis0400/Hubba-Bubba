@@ -2,9 +2,9 @@
 Animacion en html5
 
 ## Instalador
-'''
+```
 git clone https://github.com/dis0400/Hubba-Bubba.git
-'''
+```
 
 En extensiones de visual studio code y buscas Live Server e instalarlo
 
