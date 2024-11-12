@@ -1,4 +1,5 @@
 let balloon = document.getElementById('balloon');
+let popScreen = document.getElementById('pop-screen');
 let popText = document.getElementById('pop-text');
 let blowCount = 0;
 
@@ -17,11 +18,11 @@ navigator.mediaDevices.getUserMedia({ audio: true })
             analyser.getByteFrequencyData(dataArray);
             let volume = dataArray.reduce((a, b) => a + b) / bufferLength;
 
-            if (volume > 80) { 
+            if (volume > 80) { // Ajusta este valor según el ruido ambiente
                 blowCount++;
                 inflateBalloon();
 
-                if (blowCount >= 3) {
+                if (blowCount >= 3) { // Explota al tercer soplido
                     explodeBalloon();
                 }
             }
@@ -33,19 +34,20 @@ navigator.mediaDevices.getUserMedia({ audio: true })
     .catch(error => console.log('Error al acceder al micrófono:', error));
 
 function inflateBalloon() {
-    let newSize = 100 + (blowCount * 50);
+    // Incrementa el tamaño del globo con cada soplido
+    let newSize = 100 + (blowCount * 50); // Tamaño base + incremento
     balloon.style.width = newSize + 'px';
     balloon.style.height = newSize + 'px';
 }
 
 function explodeBalloon() {
     balloon.style.display = 'none'; // Oculta el globo
-    popText.style.display = 'block'; // Muestra el texto "POP"
+    popScreen.style.display = 'flex'; // Muestra la pantalla de explosión
 }
 
-// Agrega un evento de clic para ocultar el texto "POP" al hacer clic
-popText.addEventListener('click', () => {
-    popText.style.display = 'none';
+// Agrega un evento de clic para ocultar la pantalla "POP" al hacer clic y reiniciar
+popScreen.addEventListener('click', () => {
+    popScreen.style.display = 'none';
     resetBalloon();
 });
 
