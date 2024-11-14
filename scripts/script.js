@@ -1,8 +1,9 @@
 let balloon = document.getElementById('balloon');
 let popScreen = document.getElementById('pop-screen');
 let popText = document.getElementById('pop-text');
-let pressure = 0; // La presión se acumulará con cada soplido
-let maxPressure = 2000; // Presión máxima antes de explotar
+let explosion = document.getElementById('explosion'); 
+let pressure = 0;
+let maxPressure = 9000; 
 
 navigator.mediaDevices.getUserMedia({ audio: true })
     .then(stream => {
@@ -19,11 +20,11 @@ navigator.mediaDevices.getUserMedia({ audio: true })
             analyser.getByteFrequencyData(dataArray);
             let volume = dataArray.reduce((a, b) => a + b) / bufferLength;
 
-            if (volume > 80) { // Ajusta este valor según el ruido ambiente
-                pressure += 10; // Incrementa la presión con cada soplido
+            if (volume > 80) { 
+                pressure += 10; 
                 inflateBalloon();
 
-                if (pressure >= maxPressure) { // Explota cuando alcanza la presión máxima
+                if (pressure >= maxPressure) { 
                     explodeBalloon();
                 }
             }
@@ -32,29 +33,49 @@ navigator.mediaDevices.getUserMedia({ audio: true })
         }
         detectBlow();
     })
-    .catch(error => console.log('Error al acceder al micrófono:', error));
+    .catch(error => {
+        console.error('Error al acceder al micrófono:', error);
+        alert('No se pudo acceder al micrófono. Verifica los permisos en el navegador.');
+    });
+
 
 function inflateBalloon() {
-    // Calcula el tamaño del globo según la presión acumulada
-    let newSize = 100 + (pressure * 2); // Tamaño base + incremento en función de la presión
+    let newSize = 100 + (pressure * 3); 
     balloon.style.width = newSize + 'px';
     balloon.style.height = newSize + 'px';
+    if (newSize >= 365) { 
+        explodeBalloon();
+    }
 }
 
 function explodeBalloon() {
-    balloon.style.display = 'none'; // Oculta el globo
-    popScreen.style.display = 'flex'; // Muestra la pantalla de explosión
+    balloon.style.display = 'none'; 
+    explosion.style.display = 'flex'; 
+
+    // Añade la clase para el efecto de crecimiento y deslizamiento después de que sea visible
+    setTimeout(() => {
+        explosion.classList.add('grow-and-slide');
+        console.log("Clase .grow-and-slide aplicada"); 
+    }, 500);
+
+    // Después de 2.5 segundos, oculta la explosión y muestra la pantalla rosa con "POP"
+    setTimeout(() => {
+        explosion.style.display = 'none'; 
+        //popScreen.style.display = 'flex';
+    }, 2500);
 }
 
-// Agrega un evento de clic para ocultar la pantalla "POP" al hacer clic y reiniciar
 popScreen.addEventListener('click', () => {
-    popScreen.style.display = 'none';
+    explosion.style.display = 'none';
     resetBalloon();
 });
 
 function resetBalloon() {
-    pressure = 0; // Reinicia la presión
-    balloon.style.width = '100px'; // Tamaño inicial
+    pressure = 0; 
+    balloon.style.width = '100px';
     balloon.style.height = '100px';
-    balloon.style.display = 'block'; // Muestra el globo nuevamente
+    balloon.style.display = 'block'; 
+    explosion.style.display = 'none'; 
+    explosion.classList.remove('grow-and-slide');
+    popScreen.style.display = 'none'; 
 }
