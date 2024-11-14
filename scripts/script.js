@@ -1,7 +1,8 @@
 let balloon = document.getElementById('balloon');
 let popScreen = document.getElementById('pop-screen');
 let popText = document.getElementById('pop-text');
-let blowCount = 0;
+let pressure = 0; // La presión se acumulará con cada soplido
+let maxPressure = 2000; // Presión máxima antes de explotar
 
 navigator.mediaDevices.getUserMedia({ audio: true })
     .then(stream => {
@@ -19,10 +20,10 @@ navigator.mediaDevices.getUserMedia({ audio: true })
             let volume = dataArray.reduce((a, b) => a + b) / bufferLength;
 
             if (volume > 80) { // Ajusta este valor según el ruido ambiente
-                blowCount++;
+                pressure += 10; // Incrementa la presión con cada soplido
                 inflateBalloon();
 
-                if (blowCount >= 3) { // Explota al tercer soplido
+                if (pressure >= maxPressure) { // Explota cuando alcanza la presión máxima
                     explodeBalloon();
                 }
             }
@@ -34,8 +35,8 @@ navigator.mediaDevices.getUserMedia({ audio: true })
     .catch(error => console.log('Error al acceder al micrófono:', error));
 
 function inflateBalloon() {
-    // Incrementa el tamaño del globo con cada soplido
-    let newSize = 100 + (blowCount * 50); // Tamaño base + incremento
+    // Calcula el tamaño del globo según la presión acumulada
+    let newSize = 100 + (pressure * 2); // Tamaño base + incremento en función de la presión
     balloon.style.width = newSize + 'px';
     balloon.style.height = newSize + 'px';
 }
@@ -52,7 +53,7 @@ popScreen.addEventListener('click', () => {
 });
 
 function resetBalloon() {
-    blowCount = 0; // Reinicia el contador de soplidos
+    pressure = 0; // Reinicia la presión
     balloon.style.width = '100px'; // Tamaño inicial
     balloon.style.height = '100px';
     balloon.style.display = 'block'; // Muestra el globo nuevamente

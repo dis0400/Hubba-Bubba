@@ -22,14 +22,17 @@ body, html {
 }
 
 #balloon {
-    width: 100px;
-    height: 100px;
-    background-color: pink;
-    border-radius: 50%;
-    transition: width 0.2s ease, height 0.2s ease;
-    margin: auto;
-    margin-top: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+        height: 100px;
+        background-color: pink;
+        border-radius: 50%;
+        transition: width 0.2s ease, height 0.2s ease;
 }
+    
 
 #pop-screen {
     display: none;
